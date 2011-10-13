@@ -46,7 +46,7 @@ module MixpanelRails
 
     def register_with_mixpanel
       distinct_id = mixpanel_distinct_id.bind(self).call
-      session[:register_with_mixpanel] ||= distinct_id ? { distinct_id: distinct_id } : {}
+      session[:register_with_mixpanel] ||= distinct_id ? { :distinct_id => distinct_id } : {}
     end
 
     def mixpanel_queue
