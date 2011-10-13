@@ -31,7 +31,7 @@ module MixpanelRails
     def process_mixpanel_queue
       unless response.redirect_url
         mixpanel = Mixpanel::Tracker.new(MixpanelRails::Railtie.config.mixpanel_rails.token, request.env, true)
-        if env["Rack-Middleware-PDFKit"]
+        if request.env["Rack-Middleware-PDFKit"]
           mixpanel_queue.each {|s| mixpanel.track_event(s, register_with_mixpanel) }
         else
           name_tag = mixpanel_name_tag.bind(self).call
