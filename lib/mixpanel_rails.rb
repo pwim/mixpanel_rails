@@ -29,11 +29,11 @@ module MixpanelRails
     end
 
     def process_mixpanel_queue
-      unless response.redirect_url
+      unless response.redirect_url && request.host == URI.parse(response.redirect_url).host
         mixpanel = Mixpanel::Tracker.new(MixpanelRails::Railtie.config.mixpanel_rails.token, request.env, true)
         distinct_id = mixpanel_distinct_id.bind(self).call
         params = {:distinct_id => distinct_id}.merge(register_with_mixpanel)
-        if request.env["Rack-Middleware-PDFKit"]
+        if request.env["Rack-Middleware-PDFKit"] || response.redirect_url
           mixpanel_queue.each {|s| mixpanel.track_event(s, params) }
         else
           name_tag = mixpanel_name_tag.bind(self).call
