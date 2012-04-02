@@ -19,4 +19,11 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency 'mixpanel', '~> 1.0.0'
+  s.add_dependency 'rails', '~> 3.0'
+
+  s.add_development_dependency 'rspec', '~> 2.5'
+  s.add_development_dependency 'capybara', '~> 1.1.1'
+  s.add_development_dependency 'steak'
+  s.add_development_dependency 'steak'
+  s.add_development_dependency 'rspec-rails'
 end

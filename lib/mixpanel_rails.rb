@@ -32,7 +32,9 @@ module MixpanelRails
       unless response.redirect_url && request.host == URI.parse(response.redirect_url).host
         mixpanel = Mixpanel::Tracker.new(MixpanelRails::Railtie.config.mixpanel_rails.token, request.env, true)
         distinct_id = mixpanel_distinct_id.bind(self).call
-        params = {:distinct_id => distinct_id}.merge(register_with_mixpanel)
+        params = {}
+        params[:distinct_id] = distinct_id if distinct_id
+        params.merge!(register_with_mixpanel)
         if request.env["Rack-Middleware-PDFKit"] || response.redirect_url
           mixpanel_queue.each {|s| mixpanel.track_event(s, params) }
         else
