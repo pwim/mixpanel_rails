@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 2.5'
   s.add_development_dependency 'capybara', '~> 1.1.1'
   s.add_development_dependency 'steak'
-  s.add_development_dependency 'steak'
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'guard-rspec'
 end
