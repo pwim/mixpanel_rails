@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require "spec_helper"
 
 class ExampleController < ApplicationController
   uses_mixpanel
@@ -31,6 +31,19 @@ class DistinctIdController < ApplicationController
 
   def index
     render inline: "OK", layout: true
+  end
+end
+
+class ExternalRedirectsController < ApplicationController
+  uses_mixpanel
+
+  def index
+    track_with_mixpanel "Before External"
+    redirect_to "http://www.example.org/external_redirects/after"
+  end
+
+  def after
+    head :ok
   end
 end
 
@@ -75,5 +88,45 @@ feature 'mixpanel integration' do
   context 'follow redirect' do
     background { visit '/redirects' }
     it_should_behave_like "with event"
+  end
+
+  context 'follow external redirect' do
+    background do
+      @request_time = Time.parse("2010-09-05 12:00 UTC")
+      @worker = Object.new
+      class << @worker
+        attr_accessor :written
+        def write(s)
+          @written = s
+        end
+        def data
+          json = @written.match(/\?data=(.*)/)[1]
+          JSON.load(Base64.decode64(json))
+        end
+
+        def event
+          data["event"]
+        end
+
+        %w[ip token time].each do |s|
+          define_method(s) do
+            data["properties"][s]
+          end
+        end
+      end
+      class << Mixpanel::Tracker
+        attr_accessor :worker
+      end
+      Mixpanel::Tracker.worker = @worker
+      Timecop.freeze(@request_time) do
+        visit '/external_redirects'
+      end
+    end
+
+    it "should record data" do
+      @worker.event.should == "Before External"
+      @worker.ip.should == "127.0.0.1"
+      @worker.time.should == @request_time.to_i
+    end
   end
 end
