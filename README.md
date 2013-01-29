@@ -1,3 +1,5 @@
+__*Deprecated*: Use [Event Tracker](http://www.doorkeeperhq.com/developer/event-tracker-mixpanel-kissmetrics) instead.__
+
 # Mixpanel Rails
 
 Super simple mixpanel integration with Rails that we use for [Doorkeeper](http://www.doorkeeperhq.com/) and others.
